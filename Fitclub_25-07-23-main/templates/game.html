@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Upload</title>
+</head>
+<body>
+    <h1>Capture and Upload Image</h1>
+    <video id="video" width="320" height="240" autoplay></video>
+    <button id="snap">Capture Photo</button>
+    <canvas id="canvas" width="320" height="240"></canvas>
+    <form action="/upload" id="uploadForm" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="image" id="imageData">
+        <button type="submit">Upload Photo</button>
+    </form>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById('snap');
+        const imageDataInput = document.getElementById('imageData');
+        const context = canvas.getContext('2d');
+
+        // Access the device camera and stream to video element
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error("Error accessing camera: ", err);
+            });
+
+        // Capture the photo when snap button is clicked
+        snap.addEventListener('click', () => {
+            context.drawImage(video, 0, 0, 320, 240);
+            const imageDataURL = canvas.toDataURL('image/png');
+            imageDataInput.value = imageDataURL;  // Store the image data in hidden input field
+        });
+    </script>
+</body>
+</html>
